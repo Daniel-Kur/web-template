@@ -45,9 +45,15 @@ Make sure you have **Node.js** installed on your machine. If you haven't install
 
 ## Project Structure Explanation
 *src/components*: Contains reusable React components.
+
 *src/pages*: Contains different page components for routing.
+
 *src/hooks*: Stores custom hooks that encapsulate logic.
+
 *src/utils*: Stores utility functions.
+
 *src/services*: Contains any service-related logic, such as API calls.
+
 *src/data*: Used for any data-driven operations.
+
 *src/types*: Stores TypeScript type definitions.
