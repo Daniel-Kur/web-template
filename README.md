@@ -20,10 +20,10 @@ Make sure you have **Node.js** installed on your machine. If you haven't install
 
 1. **Clone the repository**:
 
-   ```bash
-   git clone https://github.com/Daniel-Kur/web-template.git
-   cd web-project-boilerplate
-   ```
+  ```bash
+  git clone https://github.com/Daniel-Kur/web-template.git
+  cd web-project-boilerplate
+  ```
 
 2. **Install the dependencies**:
   
@@ -39,9 +39,9 @@ Make sure you have **Node.js** installed on your machine. If you haven't install
 
 4. **Build for production**"
    
-   ```bash
-   npm run build
-   ```
+  ```bash
+  npm run build
+  ```
 
 ## Project Structure Explanation
 *src/components*: Contains reusable React components.
