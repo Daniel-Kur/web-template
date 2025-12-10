@@ -1,73 +1,160 @@
-# React + TypeScript + Vite
+# Vite + React + TypeScript + Tailwind CSS v4 + shadcn/ui Boilerplate
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean and modern starter template designed for building fast, scalable, and maintainable web applications.  
+This boilerplate includes a minimal but powerful setup using today's best tools in the React ecosystem.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## React Compiler
+### **Vite**
+A blazing-fast build tool and development server offering instant HMR and zero-config TypeScript support.
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### **React + TypeScript**
+Modern React with type-safe development and component-driven architecture.
 
-## Expanding the ESLint configuration
+### **Tailwind CSS v4**
+Utility-first CSS with faster builds, simplified rules, and an optimized developer experience.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### **shadcn/ui**
+Accessible, unstyled React components that work seamlessly with Tailwind and offer complete design freedom.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### **Custom Theme Provider**
+A lightweight theme management system supporting:
+- Light mode
+- Dark mode
+- System preference
+- Persistent theme storage via `localStorage`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### **TanStack Query**
+Powerful data-fetching and caching solution with built-in async state management:
+- `useQuery` for fetching
+- `useMutation` for POST/PUT/DELETE
+- Query Devtools included
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Project Structure
+
+```
+src/
+│
+├── components/
+│   └── ui/                 # shadcn UI components
+│
+├── hooks/                  # Custom hooks (if needed)
+│
+├── lib/
+│   └── react-query.ts      # QueryClient configuration
+│
+├── providers/
+│   └── QueryProvider.tsx   # TanStack Query provider wrapper
+│
+├── theme/
+│   ├── ThemeProvider.tsx   # Theme context + provider
+│   └── theme-context.ts    # Theme hook + types
+│
+├── App.tsx                 # Main UI entry
+└── main.tsx                # Application bootstrap
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Installation
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun install
+# or
+npm install
+# or
+pnpm install
 ```
+
+---
+
+## Development
+
+```bash
+bun dev
+# or
+npm run dev
+# or
+pnpm dev
+```
+
+Visit the app at:
+
+```
+http://localhost:5173/
+```
+
+---
+
+## Theme Usage
+
+Set your default theme at the root:
+
+```tsx
+<ThemeProvider defaultTheme="dark">
+  <App />
+</ThemeProvider>
+```
+
+Options:
+- "light"
+- "dark"
+- "system"
+
+---
+
+## Using shadcn/ui Components
+
+Example:
+
+```tsx
+import { Button } from "@/components/ui/button";
+
+<Button variant="outline">Click Me</Button>;
+```
+
+---
+
+## Using TanStack Query
+
+### Query Example
+
+```ts
+const { data, isLoading } = useQuery({
+  queryKey: ["users"],
+  queryFn: () => fetch("/api/users").then((r) => r.json()),
+});
+```
+
+### Mutation Example
+
+```ts
+const mutation = useMutation({
+  mutationFn: (payload) =>
+    fetch("/api/login", { method: "POST", body: JSON.stringify(payload) })
+      .then((r) => r.json()),
+});
+```
+
+---
+
+## Design Philosophy
+
+This boilerplate is intentionally:
+
+- **Thin** → minimal abstraction  
+- **Modern** → aligned with today’s best ecosystem practices  
+- **Scalable** → clean folder organization  
+- **Flexible** → easy to extend with routing, API clients, auth, etc.  
+
+Perfect as a base for personal projects, SaaS dashboards, landing pages, or production-ready applications.
+
+---
+
+## License
+
+MIT — free to use, fork, and customize.
