@@ -2,54 +2,61 @@
 
 ## Project Overview
 
-BUN + React + TypeScript + Vite frontend. Enterprise dashboard style.
+Bun + React + TypeScript + Vite frontend. Enterprise dashboard style.
 
-UI stack:
+UI stack: Tailwind CSS, ShadCN UI (Radix-based)
+State: TanStack Query (server) · Zustand (UI/client)
+Routing: TanStack Router v1, file-based via `@tanstack/router-plugin/vite`
 
-* Tailwind CSS
-* ShadCN UI (Radix-based)
+---
 
-State:
+# Token Efficiency
 
-* TanStack Query → server state
-* Zustand → UI/client state
+## Response Discipline
 
-Routing:
+- Output only what was asked. No unrequested boilerplate, summaries, or explanations.
+- Do not repeat the task description before acting. Just act.
+- No filler: "Certainly!", "Great question!", "Sure!", "Let me know if you need anything else."
+- Do not explain code you just wrote unless asked.
+- Prefer code over prose when both express the same thing.
 
-* TanStack Router v1
-* File-based routing via `@tanstack/router-plugin/vite`
+## File Output Discipline
+
+- **Only output files that changed.** Never re-emit unchanged files.
+- Use targeted edits, not full-file rewrites, when only part of a file changes.
+- Do not scaffold unrequested boilerplate files.
+
+## Planning Discipline
+
+- For clear tasks: act first, explain via inline comments if needed.
+- For ambiguous tasks: ask ONE clarifying question, not multiple.
+- Never ask for information inferable from the codebase.
+
+## Codebase Hygiene
+
+- Search before creating. If a utility, hook, or component exists — use it.
+- Only touch files relevant to the current task.
+- Do not refactor unrelated code or fix out-of-scope lint issues.
+- Never read `routeTree.gen.ts`, or `node_modules` paths — they are off-limits.
+- Do not edit lockfiles unless package dependencies changed.
+- Avoid reading lockfiles unless dependency/version verification is required.
 
 ---
 
 # Architecture Philosophy
 
-The project emphasizes:
+Strict separation of concerns · predictable data flow · reusable UI primitives · maintainable feature boundaries.
 
-* strict separation of concerns
-* predictable data flow
-* reusable UI primitives
-* maintainable feature boundaries
-* enterprise dashboard scalability
-
-The codebase should prioritize:
-
-* readability
-* explicitness
-* consistency
-* low coupling
-* composability
-
+Prioritize: readability · explicitness · consistency · low coupling · composability.
 Avoid clever abstractions unless they clearly reduce complexity.
 
 ---
 
 # Folder Structure
 
-Follow this layout strictly.
+Follow strictly. Do not invent new top-level folders.
 
-Do not invent new top-level folders.
-
-```txt
+```
 src/
   features/
     <feature>/
@@ -59,7 +66,6 @@ src/
       <feature>.dto.ts
       use<Feature>.ts
       <Feature>Page.tsx
-
       components/
         <FeatureTable>.tsx
         <FeatureDialog>.tsx
@@ -82,174 +88,87 @@ src/
 
 ---
 
-# Dependency Direction Rules
+# Dependency Direction
 
-Allowed:
-
-```txt
-Pages -> hooks/components
-hooks -> api/mapper/store
-api -> lib/api
-mapper -> dto/types
-components -> shared/ui
+```
+Pages        → hooks / components
+hooks        → api / mapper / store
+api          → lib/api
+mapper       → dto / types
+components   → shared / ui
 ```
 
-Not allowed:
-
-```txt
-components -> api
-components -> fetch
-components -> direct mutations
-mapper -> React
-store -> api
-store -> fetch
-```
-
-Components should never own networking logic.
-
----
-
-# Coding Style
-
-* TypeScript strict mode enabled
-* No `any`
-* No `@ts-ignore` without explanation
-* Prefer `type` over `interface` unless extending
-* Prefer explicit types for exported APIs
-* Keep files small and focused
-* One responsibility per file
+Components must never own networking logic, call fetch/axios directly, or perform direct mutations.
 
 ---
 
 # Naming Rules
 
-* Components → PascalCase
-* Hooks → `useXxx`
-* Stores → `xxx.store.ts`
-* API files → `xxx.api.ts`
-* DTO files → `xxx.dto.ts`
-* Mapper files → `xxx.mapper.ts`
-* Types → `xxx.types.ts`
+| Artifact | Convention |
+|---|---|
+| Components | PascalCase |
+| Hooks | `useXxx` |
+| Stores | `xxx.store.ts` |
+| API files | `xxx.api.ts` |
+| DTO files | `xxx.dto.ts` |
+| Mappers | `xxx.mapper.ts` |
+| Types | `xxx.types.ts` |
 
-Examples:
+---
 
-```txt
-users.api.ts
-users.dto.ts
-users.mapper.ts
-users.types.ts
-useUsers.ts
-UsersTable.tsx
-users.store.ts
-```
+# Coding Style
+
+- TypeScript strict mode. No `any`. No `@ts-ignore` without explanation.
+- Prefer `type` over `interface` unless extending.
+- Explicit types on all exported APIs.
+- One responsibility per file. Keep files small and focused.
 
 ---
 
 # Pages
 
-Pages are orchestration layers only.
+Pages are orchestration layers only: layout composition, hook wiring, route integration, prop passing.
 
-Responsibilities:
-
-* layout composition
-* hook wiring
-* route integration
-* passing props to components
-
-Pages should NOT contain:
-
-* complex JSX logic
-* data transformation
-* API calls
-* mutation logic
+Pages must NOT contain: complex JSX logic · data transformation · API calls · mutation logic.
 
 ---
 
 # Components
 
-Components should be mostly presentational.
+Mostly presentational. Props in → UI out. Minimal business logic — extract into hooks.
 
-Rules:
-
-* Props in → UI out
-* Keep business logic minimal
-* Extract complexity into hooks
-
-Use:
-
-* ShadCN components first
-* Radix primitives second
-* raw HTML only for layout containers
-
-Dialogs:
-
-* Must be reusable components
-* Never embedded inline inside pages
-
-Tables:
-
-* Sticky headers required for scrollable tables
+- Use ShadCN first, Radix second, raw HTML only for layout containers.
+- Dialogs must be reusable components, never inlined in pages.
+- Tables require sticky headers for scrollable content.
 
 ---
 
 # Hooks
 
-Hooks own business logic.
+Hooks own all business logic: fetching · mutations · derived state · memoized callbacks · query invalidation · UI orchestration.
 
-Responsibilities:
-
-* data fetching
-* mutations
-* derived state
-* memoized callbacks
-* query invalidation
-* UI orchestration logic
-
-Hooks should NOT render JSX.
-
-Navigation:
-
-* use `router.navigate()` inside hooks
-* never navigate directly inside presentational components
+- Hooks must not render JSX.
+- Navigate via `router.navigate()` inside hooks — never inside presentational components.
 
 ---
 
-# API Rules
+# API Layer
 
-Always use `src/lib/api.ts`.
+Always use `src/lib/api.ts`. Never call `fetch` or `axios` directly from components or Zustand stores.
 
-Never:
-
-* call `fetch` directly
-* call axios directly from components
-* perform API calls inside Zustand stores
-
-DTO rules:
-
-* DTO types match backend responses exactly
-* Domain/UI types are frontend-facing
-* Components should never consume DTOs directly
-
-Mappers:
-
-* Pure functions only
-* No React imports
-* No side effects
-
-Example:
+- **DTOs** match backend responses exactly.
+- **Domain/UI types** are frontend-facing. Components never consume DTOs directly.
+- **Mappers** are pure functions — no React imports, no side effects.
 
 ```ts
 // users.api.ts
 import { api } from "@/lib/api";
 import type { UserDTO } from "./users.dto";
-
-export const fetchUsers = (): Promise<UserDTO[]> =>
-  api.get("/users");
+export const fetchUsers = (): Promise<UserDTO[]> => api.get("/users");
 
 // users.mapper.ts
 import type { UserDTO } from "./users.dto";
 import type { UserRow } from "./users.types";
-
 export const toUserRow = (dto: UserDTO): UserRow => ({
   id: dto.id,
   fullName: `${dto.first_name} ${dto.last_name}`,
@@ -259,334 +178,146 @@ export const toUserRow = (dto: UserDTO): UserRow => ({
 
 ---
 
-# TanStack Query Rules
+# TanStack Query
 
-TanStack Query owns ALL server state.
+Owns ALL server state: fetching · caching · synchronization · invalidation · mutations.
 
-Use it for:
+- Do not duplicate server state into Zustand.
+- Do not manually sync query state into local state unless necessary.
 
-* fetching
-* caching
-* synchronization
-* invalidation
-* mutations
-
-Do NOT:
-
-* duplicate server state into Zustand
-* manually sync query state into local state unless necessary
-
----
-
-# Query Key Convention
-
-Always use array query keys.
-
-Examples:
-
+**Query key convention** — always arrays, deterministic, prefer primitives:
 ```ts
 ["users"]
 ["users", userId]
 ["access-right", staffId, siteId]
 ```
 
-Rules:
-
-* keys must be deterministic
-* avoid unstable object literals
-* prefer primitives in keys
+**Mutations** live in hooks, not components. On success: invalidate related keys + `sonner` toast. On failure: error toast + preserve recoverable UI state. Optimistic updates only when explicitly required.
 
 ---
 
-# Mutation Rules
+# Zustand
 
-Mutations should live inside hooks, not components.
+UI/client state only: sidebar · selected row IDs · dialog open state · filters · active tabs · temporary UI selections.
 
-After successful mutations:
-
-* invalidate related query keys
-* show success feedback using `sonner`
-
-On mutation failure:
-
-* show error toast
-* preserve recoverable UI state
-
-Optimistic updates:
-
-* only implement when explicitly needed
-
----
-
-# Zustand Rules
-
-Zustand is for UI/client state only.
-
-Allowed:
-
-* sidebar state
-* selected row IDs
-* dialog open state
-* filters
-* active tabs
-* temporary UI selections
-
-Not allowed:
-
-* server-fetched collections
-* duplicated query data
-* API fetching logic
-
-Rules:
-
-* one store file per feature slice
-* avoid giant global stores
-* prefer atomic slices
+- One store file per feature slice. No giant global stores.
+- Never store server-fetched collections or duplicate query data.
 
 ---
 
 # Routing
 
-Router:
-
-* TanStack Router v1
-* File-based routing via Vite plugin
-
-## Setup
-
-Plugin order in `vite.config.ts`:
-
+Plugin order in `vite.config.ts` is mandatory:
 ```ts
-tanstackRouter(),
+tanstackRouter(),  // MUST come before react()
 react(),
 ```
 
-Rules:
-
-* `@tanstack/router-plugin/vite` must come BEFORE `@vitejs/plugin-react`
-* Enable `autoCodeSplitting: true`
-* Routes directory: `src/routes`
-* Generated file: `src/routeTree.gen.ts`
-* Never edit `routeTree.gen.ts`
-
-Add to `.vscode/settings.json`:
+Enable `autoCodeSplitting: true`. Routes in `src/routes/`. Generated file: `src/routeTree.gen.ts` — **never edit it**.
 
 ```json
+// .vscode/settings.json
 {
-  "files.readonlyInclude": {
-    "**/routeTree.gen.ts": true
-  },
-  "search.exclude": {
-    "**/routeTree.gen.ts": true
-  }
+  "files.readonlyInclude": { "**/routeTree.gen.ts": true },
+  "search.exclude": { "**/routeTree.gen.ts": true }
 }
 ```
 
-## Route File Naming
-
-```txt
+**File naming:**
+```
 src/routes/
   __root.tsx
   index.tsx
-
   users.tsx
-
   users/
     index.tsx
     $userId.tsx
     $userId.lazy.tsx
-
     -components/
 ```
 
-## Routing Rules
+- `$param` for dynamic segments · `.lazy.tsx` for non-critical routes
+- `__root.tsx` for app shell/providers/layout
+- Co-locate non-route files with `-` prefix (`-components`, `-hooks`, `-utils`)
+- Use route loaders + `ensureQueryData()` for prefetching. Avoid duplicate fetching inside components.
 
-* Use `$param` for dynamic segments
-* Use `.lazy.tsx` for non-critical routes
-* Use `__root.tsx` for app shell/providers/layout
-* Use route loaders for prefetching
-* Co-locate non-route files with `-` prefix
+**Search params** — use for filters, sorting, pagination, tabs, shareable UI state. Define schemas on the route. Never parse ad-hoc in components.
 
-Examples:
-
-* `-components`
-* `-hooks`
-* `-utils`
-
-Route components should remain thin orchestration layers.
-
-Heavy UI belongs in feature components.
-
-Prefer:
-
-* route loaders
-* `ensureQueryData()`
-* TanStack Query prefetching
-
-Avoid duplicate fetching inside components.
-
-## Search Params
-
-Use TanStack Router search params for:
-
-* filters
-* sorting
-* pagination
-* tabs
-* shareable UI state
-
-Prefer search params over Zustand for URL-relevant state.
-
-Define schemas on the route itself.
-
-Do NOT:
-
-* parse search params ad-hoc in components
-* manually stringify query strings
-
-## Navigation
-
-Use:
-
-* `<Link />` from `@tanstack/react-router`
-* `router.navigate()` inside hooks
-
-Never:
-
-* hardcode route strings
-* use raw anchor tags for app navigation
-* use `useNavigate` inside presentational components
+**Navigation** — `<Link />` from `@tanstack/react-router` or `router.navigate()` in hooks. Never hardcode route strings or use raw anchor tags.
 
 ---
 
-# UI & Styling Rules
+# UI & Styling
 
-Style target:
-
-* enterprise dashboard density
-* clean and consistent spacing
-* scalable layouts
-
-Typography:
-
-* prefer `text-sm` and `text-base`
-
-Layout:
-
-* use `flex-1 min-h-0 overflow-auto`
-* avoid overflow bugs
-
-Spacing:
-
-* use consistent spacing scale
-
-Preferred:
-
-* `gap-2`
-* `gap-4`
-* `p-4`
-
-Avoid:
-
-* arbitrary pixel values
-* inline styles
-* CSS modules unless legacy
-* `!important`
+- Enterprise dashboard density. Clean, consistent spacing.
+- Typography: prefer `text-sm`, `text-base`.
+- Layout: `flex-1 min-h-0 overflow-auto` to avoid overflow bugs.
+- Spacing: `gap-2`, `gap-4`, `p-4` — no arbitrary pixel values, no inline styles, no `!important`.
 
 ---
 
-# Loading, Error & Empty States
+# Loading / Error / Empty States
 
-Always handle:
+Always handle all four states. No silent empty renders.
 
-* loading
-* error
-* empty
-* success
-
-Loading:
-
-* use ShadCN `Skeleton`
-
-Errors:
-
-* inline errors for queries
-* `sonner` toast for mutations
-
-Empty:
-
-* explicit empty states
-* never silently render nothing
+| State | Pattern |
+|---|---|
+| Loading | ShadCN `Skeleton` |
+| Error (query) | Inline error |
+| Error (mutation) | `sonner` toast |
+| Empty | Explicit empty state component |
 
 ---
 
-# Performance Defaults
+# Performance
 
-* Use route-level code splitting with `.lazy.tsx`
-* Enable `autoCodeSplitting`
-* Prefer TanStack Query caching over manual memo caches
-* Memoize only when measurable
-* Avoid premature optimization
-* Keep re-renders localized
-* Virtualize large tables/lists when necessary
-
-Avoid:
-
-* excessive `useMemo`
-* excessive `useCallback`
-* deep prop drilling
+- Route-level code splitting via `.lazy.tsx` + `autoCodeSplitting`.
+- Prefer TanStack Query caching over manual memo caches.
+- Memoize only when measurable. Avoid excessive `useMemo`/`useCallback`.
+- Virtualize large tables/lists when necessary. Keep re-renders localized.
 
 ---
 
-# Before Adding Any File
+# Security
 
-1. Search for existing implementations first
-2. Check:
+## Input Validation
 
-   * `src/components/shared`
-   * `src/hooks`
-   * nearby features
-3. Reuse before creating
-4. Match existing patterns
-5. Do not refactor unrelated files
+All user inputs require explicit max length limits. Validate required fields before submit. Trim strings unless whitespace is meaningful. Backend validation is always also required.
 
----
+Limits: names ≤ 100 · emails ≤ 254 · phone ≤ 32 · descriptions ≤ 500–1000
 
-# Preferred Pattern Example
+## File Uploads
 
-```txt
-UsersPage
-  -> useUsers()
-      -> users.api.ts
-      -> users.mapper.ts
-  -> UsersTable
-  -> UsersDialog
+- Allowlist MIME types and extensions. Enforce max file size. Reject unknown types.
+- Show clear validation errors. Clean up preview URLs on removal/unmount:
+  ```ts
+  URL.revokeObjectURL(previewUrl);
+  ```
+- Never upload before validation. Never trust extension alone.
+- Clear file input state after rejection or successful cleanup.
+
+## Forms
+
+- Disable submit while mutation is pending. Prevent duplicate submissions.
+- Validate before mutation. Surface server validation errors clearly.
+
+## Rendering & Secrets
+
+- Never use `dangerouslySetInnerHTML` without sanitization and documented justification.
+- Never log tokens, API keys, or cookies. Never store secrets in source code.
+- Browser-exposed env vars must use Vite public prefix only when intentional.
+- Do not store sensitive server responses or private user data in localStorage/sessionStorage unless explicitly required.
+
+## API & Authorization
+
+- Always use the shared API wrapper. Show safe user-facing messages — never expose raw backend errors.
+- UI hiding is not authorization. Backend must enforce permissions.
+
+## External Links
+
+```html
+<a href="..." target="_blank" rel="noopener noreferrer">
 ```
-
----
-
-# Anti-Patterns (Do Not Do)
-
-* Do not fetch inside components
-* Do not put business logic in JSX
-* Do not bypass mappers
-* Do not mix DTOs with UI types
-* Do not create giant Zustand stores
-* Do not prematurely abstract
-* Do not use `useEffect` for derived state
-* Do not duplicate server state into Zustand
-* Do not create unrelated refactors
-* Do not suppress TypeScript with `any`
-
----
-
-# When Unsure
-
-* Prefer existing project patterns
-* Match nearby feature structure
-* Keep implementations explicit
-* Keep abstractions simple
-* Ask before major architectural changes
 
 ---
 
@@ -599,19 +330,23 @@ bun run typecheck
 bun run lint
 ```
 
-Requirements:
+Zero TypeScript errors required. Fix all introduced lint errors. Never suppress with `any`, `as unknown as`, or unexplained `@ts-ignore`.
 
-* zero TypeScript errors
-* fix all introduced lint errors
-* warnings acceptable unless critical
+---
 
-Never:
+# Global Prohibitions
 
-* silence errors using `any`
-* use `as unknown as`
-* bypass strict typing without explanation
-
-If a type is genuinely unknown:
-
-* define a proper type
-* or document the uncertainty clearly
+- Fetch inside components
+- Business logic in JSX
+- Bypass mappers or mix DTOs with UI types
+- Duplicate server state into Zustand
+- Premature abstraction
+- `useEffect` for derived state
+- Unrelated refactors in the same PR/task
+- TypeScript suppression without explanation
+- Hardcode secrets or route strings
+- Raw anchor tags for in-app navigation
+- Render unsanitized HTML
+- Log full API responses with private data
+- Accept file uploads by extension only
+- Expose stack traces to users
