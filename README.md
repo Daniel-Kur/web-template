@@ -1,160 +1,131 @@
-# Vite + React + TypeScript + Tailwind CSS v4 + shadcn/ui Boilerplate
+# Web Template (Enterprise Dashboard Baseline)
 
-A clean and modern starter template designed for building fast, scalable, and maintainable web applications.  
-This boilerplate includes a minimal but powerful setup using today's best tools in the React ecosystem.
+Production-oriented frontend template using Bun + React + TypeScript + Vite.
 
----
+## Stack
 
-## Tech Stack
+- React 19 + TypeScript (strict)
+- Vite 8
+- Tailwind CSS v4
+- shadcn/ui (Radix-based)
+- TanStack Router v1 (file-based routing)
+- TanStack Query v5 (server state)
+- Zustand (UI/client state only)
+- Sonner (mutation feedback toasts)
 
-### **Vite**
-A blazing-fast build tool and development server offering instant HMR and zero-config TypeScript support.
+## Architecture Rules
 
-### **React + TypeScript**
-Modern React with type-safe development and component-driven architecture.
-
-### **Tailwind CSS v4**
-Utility-first CSS with faster builds, simplified rules, and an optimized developer experience.
-
-### **shadcn/ui**
-Accessible, unstyled React components that work seamlessly with Tailwind and offer complete design freedom.
-
-### **Custom Theme Provider**
-A lightweight theme management system supporting:
-- Light mode
-- Dark mode
-- System preference
-- Persistent theme storage via `localStorage`
-
-### **TanStack Query**
-Powerful data-fetching and caching solution with built-in async state management:
-- `useQuery` for fetching
-- `useMutation` for POST/PUT/DELETE
-- Query Devtools included
-
----
+- Feature-first structure under `src/features/<feature>/`
+- DTO -> Mapper -> UI type flow (components never consume DTOs directly)
+- API calls only through `src/lib/api.ts`
+- TanStack Query owns all server state
+- Zustand stores only UI state (dialogs, filters, selected IDs, tabs)
+- Pages are orchestration layers; hooks own business logic
 
 ## Project Structure
 
-```
+```txt
 src/
-│
-├── components/
-│   └── ui/                 # shadcn UI components
-│
-├── hooks/                  # Custom hooks (if needed)
-│
-├── lib/
-│   └── react-query.ts      # QueryClient configuration
-│
-├── providers/
-│   └── QueryProvider.tsx   # TanStack Query provider wrapper
-│
-├── theme/
-│   ├── ThemeProvider.tsx   # Theme context + provider
-│   └── theme-context.ts    # Theme hook + types
-│
-├── App.tsx                 # Main UI entry
-└── main.tsx                # Application bootstrap
+  features/
+    users/
+      users.api.ts
+      users.dto.ts
+      users.mapper.ts
+      users.types.ts
+      useUsers.ts
+      UsersPage.tsx
+      components/
+        UsersTable.tsx
+        UsersDialog.tsx
+
+  components/
+    ui/
+    shared/
+
+  lib/
+    api.ts
+    react-query.ts
+    utils.ts
+
+  store/
+    users.store.ts
+
+  routes/
+    __root.tsx
+    index.tsx
+    users.tsx
+
+  routeTree.gen.ts   # generated, do not edit
 ```
 
----
+## Routing
 
-## Installation
+- TanStack file routes live in `src/routes`
+- Vite plugin order is:
+  1. `tanstackRouter({ autoCodeSplitting: true })`
+  2. `react()`
+- `src/routeTree.gen.ts` is generated and should never be edited
+
+Generate routes manually if needed:
+
+```bash
+bunx @tanstack/router-cli generate
+```
+
+## Getting Started
 
 ```bash
 bun install
-# or
-npm install
-# or
-pnpm install
+bun dev
 ```
 
----
+App runs at [http://localhost:5173](http://localhost:5173).
 
-## Development
+## Scripts
 
 ```bash
-bun dev
-# or
-npm run dev
-# or
-pnpm dev
+bun run dev
+bun run typecheck
+bun run lint
+bun run build
+bun run preview
 ```
 
-Visit the app at:
+Validation requirement before merge:
 
-```
-http://localhost:5173/
-```
-
----
-
-## Theme Usage
-
-Set your default theme at the root:
-
-```tsx
-<ThemeProvider defaultTheme="dark">
-  <App />
-</ThemeProvider>
+```bash
+bun run typecheck
+bun run lint
 ```
 
-Options:
-- "light"
-- "dark"
-- "system"
+## API Configuration
 
----
+`src/lib/api.ts` uses `VITE_API_BASE_URL`.
 
-## Using shadcn/ui Components
+Example `.env`:
 
-Example:
-
-```tsx
-import { Button } from "@/components/ui/button";
-
-<Button variant="outline">Click Me</Button>;
+```bash
+VITE_API_BASE_URL=http://localhost:3000
 ```
 
----
+The sample `/users` route expects a backend endpoint:
 
-## Using TanStack Query
+- `GET /users` -> `UserDTO[]`
 
-### Query Example
+## Current Baseline Features
 
-```ts
-const { data, isLoading } = useQuery({
-  queryKey: ["users"],
-  queryFn: () => fetch("/api/users").then((r) => r.json()),
-});
-```
+- Dashboard shell with sidebar + content layout
+- `/` overview route
+- `/users` feature slice with:
+  - TanStack Query fetch
+  - DTO -> mapper -> UI rows
+  - Loading/error/empty/success states
+  - Sticky table header
+  - Reusable details dialog
+  - UI-only Zustand dialog state
 
-### Mutation Example
+## Notes
 
-```ts
-const mutation = useMutation({
-  mutationFn: (payload) =>
-    fetch("/api/login", { method: "POST", body: JSON.stringify(payload) })
-      .then((r) => r.json()),
-});
-```
-
----
-
-## Design Philosophy
-
-This boilerplate is intentionally:
-
-- **Thin** → minimal abstraction  
-- **Modern** → aligned with today’s best ecosystem practices  
-- **Scalable** → clean folder organization  
-- **Flexible** → easy to extend with routing, API clients, auth, etc.  
-
-Perfect as a base for personal projects, SaaS dashboards, landing pages, or production-ready applications.
-
----
-
-## License
-
-MIT — free to use, fork, and customize.
+- Keep `routeTree.gen.ts` readonly (see `.vscode/settings.json`)
+- Prefer extending existing patterns over introducing new top-level abstractions
+- Follow `AGENTS.md` for dependency direction and naming rules
