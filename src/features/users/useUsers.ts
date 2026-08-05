@@ -1,12 +1,14 @@
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { useUsersStore } from "@/store/users.store";
 import { fetchUsers } from "./users.api";
 import { toUserRow } from "./users.mapper";
-import { useUsersStore } from "@/store/users.store";
 
 export function useUsers() {
   const selectedUserId = useUsersStore((state) => state.selectedUserId);
-  const isDetailsDialogOpen = useUsersStore((state) => state.isDetailsDialogOpen);
+  const isDetailsDialogOpen = useUsersStore(
+    (state) => state.isDetailsDialogOpen,
+  );
   const openDetailsDialog = useUsersStore((state) => state.openDetailsDialog);
   const closeDetailsDialog = useUsersStore((state) => state.closeDetailsDialog);
 
@@ -15,7 +17,10 @@ export function useUsers() {
     queryFn: ({ signal }) => fetchUsers(signal),
   });
 
-  const rows = useMemo(() => (usersQuery.data ?? []).map(toUserRow), [usersQuery.data]);
+  const rows = useMemo(
+    () => (usersQuery.data ?? []).map(toUserRow),
+    [usersQuery.data],
+  );
 
   const selectedUser = useMemo(
     () => rows.find((row) => row.id === selectedUserId) ?? null,

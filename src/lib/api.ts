@@ -35,14 +35,27 @@ async function request<TResponse>(
 }
 
 export const api = {
-  get: <TResponse>(path: string, options?: Omit<RequestOptions, "method" | "body">) =>
-    request<TResponse>(path, { ...options, method: "GET" }),
-  post: <TResponse>(path: string, body?: unknown, options?: Omit<RequestOptions, "method" | "body">) =>
-    request<TResponse>(path, { ...options, method: "POST", body }),
-  put: <TResponse>(path: string, body?: unknown, options?: Omit<RequestOptions, "method" | "body">) =>
-    request<TResponse>(path, { ...options, method: "PUT", body }),
-  patch: <TResponse>(path: string, body?: unknown, options?: Omit<RequestOptions, "method" | "body">) =>
-    request<TResponse>(path, { ...options, method: "PATCH", body }),
-  delete: <TResponse>(path: string, options?: Omit<RequestOptions, "method" | "body">) =>
-    request<TResponse>(path, { ...options, method: "DELETE" }),
+  get: <TResponse>(
+    path: string,
+    options?: Omit<RequestOptions, "method" | "body">,
+  ) => request<TResponse>(path, { ...options, method: "GET" }),
+  post: <TResponse>(
+    path: string,
+    body?: unknown,
+    options?: Omit<RequestOptions, "method" | "body">,
+  ) => request<TResponse>(path, { ...options, method: "POST", body }),
+  put: <TResponse>(
+    path: string,
+    body?: unknown,
+    options?: Omit<RequestOptions, "method" | "body">,
+  ) => request<TResponse>(path, { ...options, method: "PUT", body }),
+  patch: <TResponse>(
+    path: string,
+    body?: unknown,
+    options?: Omit<RequestOptions, "method" | "body">,
+  ) => request<TResponse>(path, { ...options, method: "PATCH", body }),
+  delete: <TResponse>(
+    path: string,
+    options?: Omit<RequestOptions, "method" | "body">,
+  ) => request<TResponse>(path, { ...options, method: "DELETE" }),
 };

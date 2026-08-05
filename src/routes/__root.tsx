@@ -1,5 +1,5 @@
-import { createRootRouteWithContext } from "@tanstack/react-router";
 import type { QueryClient } from "@tanstack/react-query";
+import { createRootRouteWithContext } from "@tanstack/react-router";
 import { Toaster } from "sonner";
 import { AppShell } from "@/components/shared/AppShell";
 

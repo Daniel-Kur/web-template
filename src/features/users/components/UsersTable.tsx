@@ -2,6 +2,15 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { UserRow } from "../users.types";
 
+const LOADING_ROW_IDS = [
+  "loading-row-1",
+  "loading-row-2",
+  "loading-row-3",
+  "loading-row-4",
+  "loading-row-5",
+  "loading-row-6",
+] as const;
+
 type UsersTableProps = {
   rows: UserRow[];
   isLoading: boolean;
@@ -20,8 +29,8 @@ export function UsersTable({
   if (isLoading) {
     return (
       <div className="space-y-2">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <Skeleton key={index} className="h-10 w-full" />
+        {LOADING_ROW_IDS.map((rowId) => (
+          <Skeleton key={rowId} className="h-10 w-full" />
         ))}
       </div>
     );
@@ -67,7 +76,11 @@ export function UsersTable({
                 <td className="px-3 py-2 capitalize">{row.roleLabel}</td>
                 <td className="px-3 py-2 capitalize">{row.statusLabel}</td>
                 <td className="px-3 py-2">
-                  <Button size="sm" variant="outline" onClick={() => onOpenDetails(row.id)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onOpenDetails(row.id)}
+                  >
                     View
                   </Button>
                 </td>
