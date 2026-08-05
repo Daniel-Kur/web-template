@@ -1,0 +1,6 @@
+interface:
+  display_name: "Animated UI Components"
+  short_description: "Add purposeful accessible application motion"
+  default_prompt: "Use $animated-ui-components to select and integrate an animated component for this interface."
+policy:
+  allow_implicit_invocation: false
