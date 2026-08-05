@@ -50,6 +50,8 @@ Official starting points:
 
 For component selection or audit work, read `references/component-review-checklist.md`.
 
+When Motion is selected for custom animation or a copied component requires it, read `references/motion-react.md` completely before installing or implementing anything.
+
 ## Integrate safely
 
 Before running a generator or registry command:
