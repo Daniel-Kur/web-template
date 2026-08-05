@@ -1,0 +1,4 @@
+interface:
+  display_name: "Enterprise Web Design"
+  short_description: "Design accessible enterprise application interfaces"
+  default_prompt: "Use $enterprise-web-design to design or refine this enterprise application interface."
